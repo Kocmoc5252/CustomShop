@@ -828,43 +828,57 @@ public class CustomFeatureListener implements Listener {
         ItemStack item = potion.getItem();
         String type = data(item, "cs_potion_type");
         if (type == null) return;
-        for (LivingEntity le : e.getAffectedEntities()) {
-            switch (type) {
-                case "storm" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 120, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 120, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 120, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 120, 1));
+
+        List<LivingEntity> targets = new ArrayList<>(e.getAffectedEntities());
+        if (targets.isEmpty()) {
+            for (Entity entity : potion.getLocation().getWorld().getNearbyEntities(potion.getLocation(), 4.0, 2.5, 4.0)) {
+                if (entity instanceof LivingEntity le) {
+                    targets.add(le);
                 }
-                case "medic" -> {
-                    le.setHealth(le.getMaxHealth());
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 120, 1));
-                }
-                case "burp" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 18, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 6, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 15, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20 * 12, 0));
-                }
-                case "flash" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 20 * 5, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1));
-                }
-                case "titan" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 90, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 90, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 90, 1));
-                }
-                case "venom" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 0));
-                }
-                case "shadow" -> {
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 45, 1));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 25, 0));
-                    le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0));
-                }
+            }
+        }
+
+        for (LivingEntity le : targets) {
+            applyCustomPotionEffect(type, le);
+        }
+    }
+
+    private void applyCustomPotionEffect(String type, LivingEntity le) {
+        switch (type) {
+            case "storm" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 120, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 120, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 120, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 120, 1));
+            }
+            case "medic" -> {
+                le.setHealth(le.getMaxHealth());
+                le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 120, 1));
+            }
+            case "burp" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 18, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 6, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 15, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20 * 12, 0));
+            }
+            case "flash" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 20 * 5, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1));
+            }
+            case "titan" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 90, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 90, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 90, 1));
+            }
+            case "venom" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 0));
+            }
+            case "shadow" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 45, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 25, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0));
             }
         }
     }
