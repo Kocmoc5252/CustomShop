@@ -52,7 +52,7 @@ public class ShopGUI implements Listener {
         inv.setItem(30, icon(Material.ENCHANTED_GOLDEN_APPLE, "&aКастом предметы"));
         inv.setItem(32, icon(Material.SPLASH_POTION, "&3Кастом зелья"));
         inv.setItem(34, icon(Material.ELYTRA, "&6Редкие предметы"));
-        inv.setItem(40, icon(Material.RESPAWN_ANCHOR, "&8База и рейд"));
+        inv.setItem(40, icon(Material.TNT, "&4Рейд и база"));
         inv.setItem(49, icon(Material.BARRIER, "&c&l✖ Закрыть"));
         placeBalance(inv, p);
         openedCategory.remove(p.getUniqueId());
@@ -102,7 +102,7 @@ public class ShopGUI implements Listener {
             case CUSTOM_ITEMS -> color("&aКастом предметы");
             case CUSTOM_POTIONS -> color("&3Кастом зелья");
             case RARE_ITEMS -> color("&6Редкие предметы");
-            case BASE_UTILS -> color("&8База и рейд");
+            case BASE_UTILS -> color("&4Рейд и база");
         };
     }
 
@@ -242,6 +242,7 @@ public class ShopGUI implements Listener {
                     new ShopItem("beacon_single", price("beacon_single", 740), ItemFactory.rareSingle(plugin, Material.BEACON, "&bМаяк", 1)),
                     new ShopItem("spawn_villager", price("spawn_villager", 320), ItemFactory.spawnEgg(plugin, Material.VILLAGER_SPAWN_EGG, "&aЯйцо жителя")),
                     new ShopItem("spawn_creeper", price("spawn_creeper", 320), ItemFactory.spawnEgg(plugin, Material.CREEPER_SPAWN_EGG, "&2Яйцо крипера")),
+                    new ShopItem("spawn_charged_creeper", price("spawn_charged_creeper", 860), ItemFactory.chargedCreeperEgg(plugin)),
                     new ShopItem("spawn_skeleton", price("spawn_skeleton", 320), ItemFactory.spawnEgg(plugin, Material.SKELETON_SPAWN_EGG, "&7Яйцо скелета")),
                     new ShopItem("spawn_sheep", price("spawn_sheep", 260), ItemFactory.spawnEgg(plugin, Material.SHEEP_SPAWN_EGG, "&fЯйцо овцы")),
                     new ShopItem("name_tag_single", price("name_tag_single", 90), ItemFactory.nameTagSingle(plugin)),
@@ -254,7 +255,8 @@ public class ShopGUI implements Listener {
                     new ShopItem("end_crystal_pack", price("end_crystal_pack", 460), ItemFactory.endCrystalPack(plugin)),
                     new ShopItem("respawn_anchor_pack", price("respawn_anchor_pack", 380), ItemFactory.respawnAnchorPack(plugin)),
                     new ShopItem("cobweb_pack", price("cobweb_pack", 220), ItemFactory.cobwebPack(plugin)),
-                    new ShopItem("tnt_pack", price("tnt_pack", 260), ItemFactory.tntPack(plugin))
+                    new ShopItem("tnt_pack", price("tnt_pack", 260), ItemFactory.tntPack(plugin)),
+                    new ShopItem("black_tnt", price("black_tnt", 1280), ItemFactory.blackTntPack(plugin))
             );
         };
     }

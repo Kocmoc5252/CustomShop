@@ -9,6 +9,7 @@ import me.example.customshop.npc.EmeraldShopNpcManager;
 import me.example.customshop.npc.ShopNpcCommand;
 import me.example.customshop.npc.ShopNpcManager;
 import me.example.customshop.privateores.PrivateOreListener;
+import me.example.customshop.raid.RaidExplosiveListener;
 import me.example.customshop.shop.EmeraldShopCommand;
 import me.example.customshop.shop.EmeraldShopGUI;
 import me.example.customshop.shop.ShopCommand;
@@ -53,7 +54,9 @@ public class CustomShopPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(npcManager, this);
         Bukkit.getPluginManager().registerEvents(emeraldNpcManager, this);
         Bukkit.getPluginManager().registerEvents(new BoostFurnaceListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PrivateOreListener(this), this);
+        PrivateOreListener privateOreListener = new PrivateOreListener(this);
+        Bukkit.getPluginManager().registerEvents(privateOreListener, this);
+        Bukkit.getPluginManager().registerEvents(new RaidExplosiveListener(this, privateOreListener), this);
         Bukkit.getPluginManager().registerEvents(new CustomFeatureListener(this), this);
 
         new CharmTicker(this).start();

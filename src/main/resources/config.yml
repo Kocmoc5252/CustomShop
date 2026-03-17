@@ -101,6 +101,7 @@ prices:
   empty_spawner: 520
   spawn_villager: 320
   spawn_creeper: 320
+  spawn_charged_creeper: 860
   spawn_skeleton: 320
   spawn_sheep: 260
   totem_single: 280
@@ -147,6 +148,7 @@ prices:
   respawn_anchor_pack: 380
   cobweb_pack: 220
   tnt_pack: 260
+  black_tnt: 1280
 
   emerald_1: 35
   emerald_10: 300

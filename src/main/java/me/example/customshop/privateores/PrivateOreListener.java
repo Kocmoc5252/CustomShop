@@ -1,24 +1,34 @@
 package me.example.customshop.privateores;
 
 import me.example.customshop.items.ItemFactory;
+import me.example.customshop.raid.RaidExplosiveListener;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +55,7 @@ public class PrivateOreListener implements Listener {
         Claim inside = claimAt(e.getBlockPlaced().getLocation());
         if (inside != null && !canUse(e.getPlayer(), inside)) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage(color("&cЭто чужой приват."));
+            e.getPlayer().sendMessage(color("&cВ чужом привате нельзя ставить блоки. Для рейда заноси TNT сверху или снаружи."));
             return;
         }
 
@@ -118,26 +128,48 @@ public class PrivateOreListener implements Listener {
         if (clicked == null) return;
         Claim claim = claimAt(clicked.getLocation());
         if (claim == null || canUse(e.getPlayer(), claim)) return;
+        if (isSpawnEgg(e.getItem())) {
+            e.setUseInteractedBlock(Event.Result.DENY);
+            e.setUseItemInHand(Event.Result.ALLOW);
+            return;
+        }
         e.setCancelled(true);
-        e.getPlayer().sendMessage(color("&cНельзя использовать блоки в чужом привате."));
+        e.getPlayer().sendMessage(color("&cВ чужом привате можно только спавнить мобов. TNT ставь и поджигай только вне региона."));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onExplode(EntityExplodeEvent e) {
-        protect(e.blockList());
+        processExplosion(e.blockList());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent e) {
-        protect(e.blockList());
+        processExplosion(e.blockList());
     }
 
-    private void protect(Collection<Block> blocks) {
-        blocks.removeIf(block -> claimAt(block.getLocation()) != null);
+    private void processExplosion(Collection<Block> blocks) {
+        boolean changed = false;
+        for (Block block : blocks) {
+            Claim claim = claimAt(block.getLocation());
+            if (claim == null) continue;
+            if (!claim.isCore(block.getLocation())) continue;
+            claims.remove(claim.key());
+            changed = true;
+        }
+        if (changed) save();
     }
 
     private boolean canUse(Player player, Claim claim) {
-        return player.hasPermission("customshop.admin") || claim.owner.equals(player.getUniqueId());
+        return canUse(player.getUniqueId(), claim) || player.hasPermission("customshop.admin");
+    }
+
+    private boolean canUse(UUID playerId, Claim claim) {
+        Player online = Bukkit.getPlayer(playerId);
+        return (online != null && online.hasPermission("customshop.admin")) || claim.owner.equals(playerId);
+    }
+
+    private boolean isSpawnEgg(ItemStack item) {
+        return item != null && item.getType().name().endsWith("_SPAWN_EGG");
     }
 
     private Claim claimAt(Location loc) {
@@ -146,6 +178,11 @@ public class PrivateOreListener implements Listener {
             if (claim.contains(loc)) return claim;
         }
         return null;
+    }
+
+    public boolean isEnemyClaim(Player player, Location loc) {
+        Claim claim = claimAt(loc);
+        return claim != null && !canUse(player, claim);
     }
 
     private Claim firstConflict(Claim created, Claim ignore) {

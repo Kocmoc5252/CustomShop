@@ -597,11 +597,37 @@ public class CustomFeatureListener implements Listener {
                 consumeOne(p, it);
                 placeProcessor(p);
             }
+            case "spawn_charged_creeper" -> {
+                e.setCancelled(true);
+                e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+                e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                spawnChargedCreeper(p, e);
+                consumeOne(p, it);
+            }
 
             // ванильные
             case "healing_pearl", "giant_snowball", "golden_apple", "ench_gapple" -> {
             }
         }
+    }
+
+    private void spawnChargedCreeper(Player p, PlayerInteractEvent e) {
+        Location spawnLoc;
+        if (e.getClickedBlock() != null) {
+            spawnLoc = e.getClickedBlock().getRelative(e.getBlockFace()).getLocation().add(0.5, 0.0, 0.5);
+        } else {
+            Block target = p.getTargetBlockExact(6);
+            if (target != null) {
+                spawnLoc = target.getRelative(BlockFace.UP).getLocation().add(0.5, 0.0, 0.5);
+            } else {
+                spawnLoc = p.getLocation().add(p.getLocation().getDirection().normalize().multiply(2.0));
+            }
+        }
+        World world = p.getWorld();
+        Creeper creeper = world.spawn(spawnLoc, Creeper.class);
+        creeper.setPowered(true);
+        world.spawnParticle(Particle.ELECTRIC_SPARK, spawnLoc.clone().add(0, 1, 0), 40, 0.4, 0.6, 0.4, 0.02);
+        world.playSound(spawnLoc, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1.0f, 1.15f);
     }
 
     private void consumeOne(Player p, ItemStack it) {

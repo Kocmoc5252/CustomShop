@@ -402,6 +402,25 @@ public class ItemFactory {
         return namedBundle(plugin, Material.TNT, 64, "&cЯщик TNT", "tnt_pack");
     }
 
+    public static ItemStack dynamiteProcessor(Plugin plugin) {
+        return taggedStack(plugin, Material.BLAZE_POWDER, 1, "&6Процессор динамита", "dynamite_processor",
+                "!&8Компонент для Tier Black TNT");
+    }
+
+    public static ItemStack blackTnt(Plugin plugin) {
+        return taggedStack(plugin, Material.TNT, 1, "&8Tier Black TNT", "black_tnt",
+                "!&8Рейдовый заряд",
+                "!&7Ломает обсидиан",
+                "!&7Радиус взрыва увеличен",
+                "!&7В чужом привате: &fкидай на землю");
+    }
+
+    public static ItemStack blackTntPack(Plugin plugin) {
+        ItemStack it = blackTnt(plugin);
+        it.setAmount(4);
+        return it;
+    }
+
     public static ItemStack rareSingle(Plugin plugin, Material mat, String name, int amount, String... lore) {
         ItemStack it = taggedStack(plugin, mat, amount, name, "rare_" + mat.name().toLowerCase(Locale.ROOT), lore);
         ItemMeta m = it.getItemMeta();
@@ -754,7 +773,13 @@ public class ItemFactory {
     }
 
     public static ItemStack spawnEgg(Plugin plugin, Material mat, String name) {
-        return taggedStack(plugin, mat, 1, name, "egg_" + mat.name().toLowerCase(Locale.ROOT), "&7Редкий предмет.");
+        return taggedStack(plugin, mat, 1, name, "egg_" + mat.name().toLowerCase(Locale.ROOT), "!&7Редкий предмет.");
+    }
+
+    public static ItemStack chargedCreeperEgg(Plugin plugin) {
+        return taggedStack(plugin, Material.CREEPER_SPAWN_EGG, 1, "&bЯйцо заряженного крипера", "spawn_charged_creeper",
+                "!&7Спавнит &bзаряженного крипера",
+                "!&7Можно юзать даже в чужом привате");
     }
 
     public static ItemStack withCustomEnchant(Plugin plugin, ItemStack item, String type, int level) {

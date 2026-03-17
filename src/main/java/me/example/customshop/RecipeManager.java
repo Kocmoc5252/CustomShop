@@ -4,6 +4,7 @@ import me.example.customshop.items.ItemFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,6 +21,18 @@ public final class RecipeManager {
         add(plugin, "emerald_chestplate", ItemFactory.emeraldChestplate(plugin), "E E", "EEE", "EEE", Material.EMERALD, null, null);
         add(plugin, "emerald_leggings", ItemFactory.emeraldLeggings(plugin), "EEE", "E E", "E E", Material.EMERALD, null, null);
         add(plugin, "emerald_boots", ItemFactory.emeraldBoots(plugin), "   ", "E E", "E E", Material.EMERALD, null, null);
+
+        ShapedRecipe processor = new ShapedRecipe(new NamespacedKey(plugin, "dynamite_processor"), ItemFactory.dynamiteProcessor(plugin));
+        processor.shape("GBG", "BGB", "GBG");
+        processor.setIngredient('G', Material.GUNPOWDER);
+        processor.setIngredient('B', Material.BLAZE_POWDER);
+        Bukkit.addRecipe(processor);
+
+        ShapedRecipe blackTnt = new ShapedRecipe(new NamespacedKey(plugin, "black_tnt"), ItemFactory.blackTntPack(plugin));
+        blackTnt.shape("PTP", "TTT", "PTP");
+        blackTnt.setIngredient('T', Material.TNT);
+        blackTnt.setIngredient('P', new RecipeChoice.ExactChoice(ItemFactory.dynamiteProcessor(plugin)));
+        Bukkit.addRecipe(blackTnt);
     }
 
     private static void add(JavaPlugin plugin, String key, org.bukkit.inventory.ItemStack result, String r1, String r2, String r3, Material primary, Material secondary, Material extra) {
