@@ -1,0 +1,26 @@
+name: CustomShop
+version: 1.2.0
+main: me.example.customshop.CustomShopPlugin
+api-version: "1.21"
+softdepend: [CoinExchanger]
+
+commands:
+  shop:
+    description: Open CustomShop
+    usage: /shop
+    aliases: [cshop]
+  eshop:
+    description: Open emerald shop
+    usage: /eshop
+  shopnpc:
+    description: Manage shop NPC
+    usage: /shopnpc <set|remove>
+  eshopnpc:
+    description: Manage emerald shop NPC
+    usage: /eshopnpc <set|remove>
+
+permissions:
+  customshop.use:
+    default: true
+  customshop.admin:
+    default: op

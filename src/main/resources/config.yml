@@ -1,0 +1,163 @@
+shop:
+  title: "&6&l✦ МАГАЗИН KOCMOCSMP ✦"
+  npc:
+    name: "&6&l✦ МАГАЗИН &7(ПКМ)"
+    profession: "WEAPONSMITH"
+    enabled: true
+
+eshop:
+  title: "&a&l✦ ИЗУМРУДНЫЙ МАГАЗИН ✦"
+  npc:
+    name: "&a&l✦ ИЗУМРУДЫ &7(ПКМ)"
+    profession: "MASON"
+    enabled: true
+
+prices:
+  sword_1: 620
+  sword_2: 220
+  sword_3: 150
+  stick_kb: 150
+  pickaxe_1: 580
+  pickaxe_2: 300
+  pickaxe_3: 220
+  shears_silk: 130
+  pickaxe_silk_ultra: 430
+  hoe_1: 140
+  hoe_2: 230
+  hoe_3: 360
+  charm_speed: 300
+  charm_jump: 300
+  charm_haste: 360
+  charm_water: 360
+  charm_miner: 330
+  charm_runner: 370
+  charm_ultra: 700
+  charm_healer: 450
+  charm_tank: 520
+  charm_blaze: 470
+  charm_ocean: 430
+  furnace_x2: 260
+  furnace_x3: 380
+  furnace_x4: 820
+  furnace_x5: 1500
+
+  book_bulldozer: 300
+  book_treecapitator: 320
+  book_poison_1: 310
+  book_poison_2: 380
+  book_wither_1: 310
+  book_wither_2: 380
+  book_eff_6: 330
+  book_eff_7: 380
+  book_eff_8: 430
+  book_eff_9: 490
+  book_eff_10: 560
+  book_sharp_6: 340
+  book_sharp_7: 390
+  book_sharp_8: 450
+  book_sharp_9: 520
+  book_sharp_10: 590
+  book_lavawalker: 320
+  book_antichams: 560
+  book_magnet: 390
+  book_supermending: 640
+  book_greenifier: 280
+  book_immortality: 520
+  book_fortune_5: 470
+  book_light_handle: 360
+  book_lifesteal_1: 340
+  book_lifesteal_2: 430
+  book_frost_1: 330
+  book_frost_2: 420
+  book_berserk_1: 360
+  book_berserk_2: 450
+  book_guardian_1: 420
+  book_autosmelt_1: 360
+
+  reveal_dust: 300
+  trap_box: 430
+  plate_wall: 390
+  giant_snowball: 340
+  holy_aura: 320
+  killer_cpu: 690
+  healing_pearl: 520
+  disorientation: 470
+  god_touch: 240
+  fire_tornado: 430
+  water_cube: 380
+  unreal_aura: 480
+
+  storm_potion: 320
+  medic_potion: 280
+  burp_potion: 300
+  flash_potion: 290
+  titan_potion: 360
+  venom_potion: 310
+  shadow_potion: 320
+
+  elytra: 900
+  ench_gapple: 880
+  golden_apple: 360
+  empty_spawner: 520
+  spawn_villager: 320
+  spawn_creeper: 320
+  spawn_skeleton: 320
+  spawn_sheep: 260
+  totem_single: 280
+  silk_book: 260
+  fireworks_16: 130
+  crossbow_multishot: 320
+  sword_vampire: 760
+  sword_frost: 740
+  axe_berserk: 680
+  bow_storm: 540
+  crossbow_phantom: 480
+  trident_poseidon: 720
+
+  pickaxe_drill: 790
+  pickaxe_molten: 690
+  axe_lumber: 560
+  shovel_quake: 510
+  shovel_archaeologist: 300
+
+  helmet_shadow: 380
+  chestplate_guardian: 430
+  leggings_shadow: 380
+  boots_volcano: 390
+  helmet_gladiator: 520
+  chestplate_gladiator: 620
+  leggings_gladiator: 560
+  boots_gladiator: 500
+  elytra_immortal: 850
+
+  shulker_single: 420
+  ancient_debris_8: 390
+  netherite_ingot_4: 520
+  beacon_single: 740
+
+  private_ore_coal: 650
+  private_ore_iron: 950
+  private_ore_gold: 1300
+  private_ore_diamond: 1800
+  private_ore_emerald: 2600
+
+  obsidian_bundle: 180
+  crying_obsidian_bundle: 260
+  end_crystal_pack: 460
+  respawn_anchor_pack: 380
+  cobweb_pack: 220
+  tnt_pack: 260
+
+  emerald_1: 35
+  emerald_10: 300
+  emerald_24: 730
+
+charm:
+  tick-period: 20
+
+furnace:
+  speed-multiplier:
+    x2: 2
+    x3: 3
+    x4: 4
+    x5: 5
