@@ -72,6 +72,15 @@ prices:
   book_berserk_1: 360
   book_berserk_2: 450
   book_guardian_1: 420
+  book_executioner_1: 470
+  book_executioner_2: 580
+  book_armorbreak_1: 450
+  book_armorbreak_2: 560
+  book_bloodrage_1: 420
+  book_bloodrage_2: 520
+  book_hunter_1: 430
+  book_hunter_2: 530
+  book_reflection_1: 480
   book_autosmelt_1: 360
 
   reveal_dust: 300
@@ -86,6 +95,10 @@ prices:
   fire_tornado: 430
   water_cube: 380
   unreal_aura: 480
+  blood_totem: 560
+  smoke_bomb: 390
+  purge_stone: 520
+  gravity_orb: 470
 
   storm_potion: 320
   medic_potion: 280
@@ -114,6 +127,10 @@ prices:
   bow_storm: 540
   crossbow_phantom: 480
   trident_poseidon: 720
+  sword_executioner: 980
+  axe_crusher: 910
+  bow_hunter: 830
+  trident_hunter: 900
 
   pickaxe_drill: 790
   pickaxe_molten: 690
@@ -129,6 +146,7 @@ prices:
   chestplate_gladiator: 620
   leggings_gladiator: 560
   boots_gladiator: 500
+  chestplate_mirror: 860
   elytra_immortal: 850
 
   shulker_single: 420

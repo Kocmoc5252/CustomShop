@@ -261,17 +261,23 @@ public class ItemFactory {
             case "guardian" -> "&fСтраж " + roman(level);
             case "berserk" -> "&4Берсерк " + roman(level);
             case "autosmelt" -> "&6Автоплавка";
+            case "executioner" -> "&4Казнь " + roman(level);
+            case "armorbreak" -> "&7Раскол " + roman(level);
+            case "hunter" -> "&aОхотник " + roman(level);
+            case "reflection" -> "&bОтражение " + roman(level);
+            case "bloodrage" -> "&cЯрость " + roman(level);
             default -> "&fКнига";
         };
         String apply = switch (type) {
             case "bulldozer" -> "&7Кирка / лопата";
             case "treecapitator" -> "&7Топор";
-            case "poison", "wither", "sharpness", "lifesteal", "frost", "berserk" -> "&7Меч / топор";
+            case "poison", "wither", "sharpness", "lifesteal", "frost", "berserk", "executioner", "armorbreak", "bloodrage" -> "&7Меч / топор";
             case "efficiency", "fortune" -> "&7Кирка";
             case "autosmelt" -> "&7Кирка / лопата";
             case "lavawalker" -> "&7Ботинки";
-            case "antichams", "guardian" -> "&7Нагрудник";
+            case "antichams", "guardian", "reflection" -> "&7Нагрудник";
             case "magnet" -> "&7Кирка / топор / лопата";
+            case "hunter" -> "&7Лук / арбалет / трезубец";
             case "supermending" -> "&7Любой предмет";
             case "greenifier" -> "&7Мотыга";
             case "immortality" -> "&7Элитры";
@@ -782,6 +788,96 @@ public class ItemFactory {
                 "!&7Можно юзать даже в чужом привате");
     }
 
+    public static ItemStack swordExecutioner(Plugin plugin) {
+        ItemStack it = simple(Material.NETHERITE_SWORD, "&4Клинок палача");
+        ItemMeta m = it.getItemMeta();
+        m.addEnchant(Enchantment.SHARPNESS, 6, true);
+        m.addEnchant(Enchantment.UNBREAKING, 5, true);
+        m.addEnchant(Enchantment.MENDING, 1, true);
+        m.addEnchant(Enchantment.FIRE_ASPECT, 2, true);
+        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        mark(plugin, m, "customshop_item", "sword_executioner");
+        it.setItemMeta(m);
+        it = withCustomEnchant(plugin, it, "executioner", 2);
+        return withCustomEnchant(plugin, it, "bloodrage", 1);
+    }
+
+    public static ItemStack axeCrusher(Plugin plugin) {
+        ItemStack it = simple(Material.NETHERITE_AXE, "&7Топор крушителя");
+        ItemMeta m = it.getItemMeta();
+        m.addEnchant(Enchantment.SHARPNESS, 6, true);
+        m.addEnchant(Enchantment.UNBREAKING, 5, true);
+        m.addEnchant(Enchantment.MENDING, 1, true);
+        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        mark(plugin, m, "customshop_item", "axe_crusher");
+        it.setItemMeta(m);
+        it = withCustomEnchant(plugin, it, "armorbreak", 2);
+        return withCustomEnchant(plugin, it, "berserk", 1);
+    }
+
+    public static ItemStack bowHunter(Plugin plugin) {
+        ItemStack it = simple(Material.BOW, "&aЛук охотника");
+        ItemMeta m = it.getItemMeta();
+        m.addEnchant(Enchantment.POWER, 6, true);
+        m.addEnchant(Enchantment.UNBREAKING, 5, true);
+        m.addEnchant(Enchantment.FLAME, 1, true);
+        m.addEnchant(Enchantment.INFINITY, 1, true);
+        mark(plugin, m, "customshop_item", "bow_hunter");
+        it.setItemMeta(m);
+        return withCustomEnchant(plugin, it, "hunter", 2);
+    }
+
+    public static ItemStack tridentHunter(Plugin plugin) {
+        ItemStack it = simple(Material.TRIDENT, "&bТрезубец преследователя");
+        ItemMeta m = it.getItemMeta();
+        m.addEnchant(Enchantment.IMPALING, 6, true);
+        m.addEnchant(Enchantment.LOYALTY, 3, true);
+        m.addEnchant(Enchantment.UNBREAKING, 5, true);
+        m.addEnchant(Enchantment.MENDING, 1, true);
+        mark(plugin, m, "customshop_item", "trident_hunter");
+        it.setItemMeta(m);
+        it = withCustomEnchant(plugin, it, "hunter", 1);
+        return withCustomEnchant(plugin, it, "light_handle", 1);
+    }
+
+    public static ItemStack chestplateMirror(Plugin plugin) {
+        ItemStack it = simple(Material.NETHERITE_CHESTPLATE, "&bЗеркальный нагрудник");
+        ItemMeta m = it.getItemMeta();
+        m.addEnchant(Enchantment.PROTECTION, 6, true);
+        m.addEnchant(Enchantment.THORNS, 3, true);
+        m.addEnchant(Enchantment.UNBREAKING, 5, true);
+        m.addEnchant(Enchantment.MENDING, 1, true);
+        m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        mark(plugin, m, "customshop_item", "chestplate_mirror");
+        it.setItemMeta(m);
+        it = withCustomEnchant(plugin, it, "reflection", 1);
+        return withCustomEnchant(plugin, it, "guardian", 1);
+    }
+
+    public static ItemStack bloodTotem(Plugin plugin) {
+        return taggedStack(plugin, Material.TOTEM_OF_UNDYING, 2, "&cКровавый тотем", "blood_totem",
+                "!&8Боевой расходник",
+                "!&7ПКМ: сила, реген и абсорбция");
+    }
+
+    public static ItemStack smokeBomb(Plugin plugin) {
+        return taggedStack(plugin, Material.FIREWORK_STAR, 4, "&8Дымовая бомба", "smoke_bomb",
+                "!&8Контроль зоны",
+                "!&7ПКМ: ослепляет врагов вокруг");
+    }
+
+    public static ItemStack purgeStone(Plugin plugin) {
+        return taggedStack(plugin, Material.AMETHYST_SHARD, 4, "&dКамень очищения", "purge_stone",
+                "!&8Сбивает баффы",
+                "!&7ПКМ: снимает положительные эффекты у врагов");
+    }
+
+    public static ItemStack gravityOrb(Plugin plugin) {
+        return taggedStack(plugin, Material.ENDER_EYE, 4, "&5Грави-сфера", "gravity_orb",
+                "!&8Стягивает врагов",
+                "!&7ПКМ: тянет всех в центр и замедляет");
+    }
+
     public static ItemStack withCustomEnchant(Plugin plugin, ItemStack item, String type, int level) {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(new NamespacedKey(plugin, "cs_ench_" + type), PersistentDataType.INTEGER, level);
@@ -834,6 +930,11 @@ public class ItemFactory {
             case "guardian" -> "&fСтраж " + roman(level);
             case "berserk" -> "&4Берсерк " + roman(level);
             case "autosmelt" -> "&6Автоплавка I";
+            case "executioner" -> "&4Казнь " + roman(level);
+            case "armorbreak" -> "&7Раскол " + roman(level);
+            case "hunter" -> "&aОхотник " + roman(level);
+            case "reflection" -> "&bОтражение " + roman(level);
+            case "bloodrage" -> "&cЯрость " + roman(level);
             default -> "&7Кастом " + roman(level);
         };
     }

@@ -17,6 +17,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -128,6 +129,11 @@ public class CustomFeatureListener implements Listener {
             case "guardian" -> "&fСтраж " + roman(level);
             case "berserk" -> "&4Берсерк " + roman(level);
             case "autosmelt" -> "&6Автоплавка I";
+            case "executioner" -> "&4Казнь " + roman(level);
+            case "armorbreak" -> "&7Раскол " + roman(level);
+            case "hunter" -> "&aОхотник " + roman(level);
+            case "reflection" -> "&bОтражение " + roman(level);
+            case "bloodrage" -> "&cЯрость " + roman(level);
             default -> "&fКастом";
         };
     }
@@ -155,6 +161,7 @@ public class CustomFeatureListener implements Listener {
     private boolean isChest(Material m) { return m.name().endsWith("CHESTPLATE"); }
     private boolean isHoe(Material m) { return m.name().endsWith("HOE"); }
     private boolean isTrident(Material m) { return m == Material.TRIDENT; }
+    private boolean isBowLike(Material m) { return m == Material.BOW || m == Material.CROSSBOW || m == Material.TRIDENT; }
     private boolean isEnchantBook(Material m) { return m == Material.BOOK; }
     private boolean isToolish(Material m) { return isPickOrShovel(m) || isAxe(m) || isHoe(m); }
     private boolean isMagnetTool(Material m) { return isPickOrShovel(m) || isAxe(m); }
@@ -183,6 +190,11 @@ public class CustomFeatureListener implements Listener {
         pool.add(ItemFactory.customBook(plugin, "lifesteal", cost >= 26 ? 2 : 1));
         pool.add(ItemFactory.customBook(plugin, "frost", cost >= 26 ? 2 : 1));
         pool.add(ItemFactory.customBook(plugin, "berserk", cost >= 26 ? 2 : 1));
+        pool.add(ItemFactory.customBook(plugin, "executioner", cost >= 26 ? 2 : 1));
+        pool.add(ItemFactory.customBook(plugin, "armorbreak", cost >= 26 ? 2 : 1));
+        pool.add(ItemFactory.customBook(plugin, "bloodrage", cost >= 26 ? 2 : 1));
+        pool.add(ItemFactory.customBook(plugin, "hunter", cost >= 26 ? 2 : 1));
+        pool.add(ItemFactory.customBook(plugin, "reflection", 1));
         if (cost >= 18) pool.add(ItemFactory.customBook(plugin, "efficiency", Math.min(10, 6 + random.nextInt(cost >= 30 ? 3 : 2))));
         if (cost >= 18) pool.add(ItemFactory.customBook(plugin, "sharpness", Math.min(10, 6 + random.nextInt(cost >= 30 ? 3 : 2))));
         if (cost >= 24) pool.add(ItemFactory.customBook(plugin, "fortune", 5));
@@ -224,20 +236,26 @@ public class CustomFeatureListener implements Listener {
         } else if (isHoe(item.getType())) {
             if (r < 0.22) setEnchant(item, "greenifier", 1);
             else if (r < 0.32) setEnchant(item, "unstable", 1 + random.nextInt(2));
-        } else if (isSword(item.getType())) {
+        } else if (isSword(item.getType()) || isAxe(item.getType())) {
             if (r < 0.10) setEnchant(item, "poison", 1 + random.nextInt(2));
             else if (r < 0.20) setEnchant(item, "wither", 1 + random.nextInt(2));
             else if (r < 0.29) setEnchant(item, "lifesteal", 1 + random.nextInt(2));
             else if (r < 0.38) setEnchant(item, "frost", 1 + random.nextInt(2));
+            else if (r < 0.47) setEnchant(item, "executioner", 1 + random.nextInt(2));
+            else if (r < 0.56) setEnchant(item, "armorbreak", 1 + random.nextInt(2));
+            else if (r < 0.64) setEnchant(item, "bloodrage", 1 + random.nextInt(2));
         } else if (isBoots(item.getType()) && r < 0.2) {
             setEnchant(item, "lavawalker", 1);
         } else if (isChest(item.getType())) {
             if (r < 0.14) setEnchant(item, "antichams", 1);
             else if (r < 0.24) setEnchant(item, "guardian", 1);
+            else if (r < 0.33) setEnchant(item, "reflection", 1);
         } else if (item.getType() == Material.ELYTRA && r < 0.18) {
             setEnchant(item, "immortality", 1);
         } else if (isTrident(item.getType()) && r < 0.18) {
             setEnchant(item, "light_handle", 1);
+        } else if (isBowLike(item.getType()) && r < 0.24) {
+            setEnchant(item, "hunter", 1 + random.nextInt(2));
         }
     }
     @EventHandler(ignoreCancelled = true)
@@ -286,15 +304,16 @@ public class CustomFeatureListener implements Listener {
         return switch (type) {
             case "bulldozer" -> isPickOrShovel(material);
             case "treecapitator" -> isAxe(material);
-            case "poison", "wither", "sharpness", "lifesteal", "frost", "berserk" -> isSword(material) || isAxe(material);
+            case "poison", "wither", "sharpness", "lifesteal", "frost", "berserk", "executioner", "armorbreak", "bloodrage" -> isSword(material) || isAxe(material);
             case "efficiency", "fortune" -> material.name().endsWith("PICKAXE");
             case "autosmelt" -> isPickOrShovel(material);
             case "lavawalker" -> isBoots(material);
-            case "antichams", "guardian" -> isChest(material);
+            case "antichams", "guardian", "reflection" -> isChest(material);
             case "magnet" -> isMagnetTool(material);
             case "greenifier" -> isHoe(material);
             case "immortality" -> material == Material.ELYTRA;
             case "light_handle" -> isTrident(material);
+            case "hunter" -> isBowLike(material);
             case "unstable", "supermending" -> material.getMaxDurability() > 0;
             default -> false;
         };
@@ -604,6 +623,38 @@ public class CustomFeatureListener implements Listener {
                 spawnChargedCreeper(p, e);
                 consumeOne(p, it);
             }
+            case "blood_totem" -> {
+                e.setCancelled(true);
+                e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+                e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                if (!startCustomCooldown(p, id, it.getType(), 20 * 26)) return;
+                consumeOne(p, it);
+                activateBloodTotem(p);
+            }
+            case "smoke_bomb" -> {
+                e.setCancelled(true);
+                e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+                e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                if (!startCustomCooldown(p, id, it.getType(), 20 * 16)) return;
+                consumeOne(p, it);
+                smokeBomb(p);
+            }
+            case "purge_stone" -> {
+                e.setCancelled(true);
+                e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+                e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                if (!startCustomCooldown(p, id, it.getType(), 20 * 18)) return;
+                consumeOne(p, it);
+                purgeStone(p);
+            }
+            case "gravity_orb" -> {
+                e.setCancelled(true);
+                e.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+                e.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                if (!startCustomCooldown(p, id, it.getType(), 20 * 15)) return;
+                consumeOne(p, it);
+                gravityOrb(p);
+            }
 
             // ванильные
             case "healing_pearl", "giant_snowball", "golden_apple", "ench_gapple" -> {
@@ -628,6 +679,65 @@ public class CustomFeatureListener implements Listener {
         creeper.setPowered(true);
         world.spawnParticle(Particle.ELECTRIC_SPARK, spawnLoc.clone().add(0, 1, 0), 40, 0.4, 0.6, 0.4, 0.02);
         world.playSound(spawnLoc, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1.0f, 1.15f);
+    }
+
+    private void activateBloodTotem(Player p) {
+        p.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 10, 1));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 8, 1));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 14, 1));
+        p.getWorld().spawnParticle(Particle.CRIMSON_SPORE, p.getLocation().add(0, 1, 0), 55, 0.6, 0.8, 0.6, 0.02);
+        p.getWorld().playSound(p.getLocation(), Sound.ITEM_TOTEM_USE, 0.85f, 0.8f);
+    }
+
+    private void smokeBomb(Player p) {
+        Location c = p.getLocation();
+        World w = p.getWorld();
+        w.spawnParticle(Particle.LARGE_SMOKE, c.clone().add(0, 1, 0), 140, 2.6, 1.0, 2.6, 0.02);
+        w.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, c.clone().add(0, 0.7, 0), 70, 2.2, 0.6, 2.2, 0.01);
+        p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 5, 0));
+        for (Entity en : w.getNearbyEntities(c, 5.5, 4, 5.5)) {
+            if (en == p || !(en instanceof LivingEntity le)) continue;
+            le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 0));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 20 * 4, 0));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 2, 0));
+        }
+    }
+
+    private void purgeStone(Player p) {
+        Location c = p.getLocation();
+        World w = p.getWorld();
+        w.spawnParticle(Particle.ENCHANT, c.clone().add(0, 1, 0), 120, 2.3, 1.0, 2.3, 0.08);
+        for (Entity en : w.getNearbyEntities(c, 6, 4, 6)) {
+            if (en == p || !(en instanceof LivingEntity le)) continue;
+            clearPositiveEffects(le);
+            le.damage(2.0, p);
+            w.spawnParticle(Particle.WITCH, le.getLocation().add(0, 1, 0), 25, 0.35, 0.45, 0.35, 0.02);
+        }
+    }
+
+    private void gravityOrb(Player p) {
+        Location c = p.getLocation();
+        World w = p.getWorld();
+        w.spawnParticle(Particle.PORTAL, c.clone().add(0, 1, 0), 140, 1.8, 0.8, 1.8, 0.18);
+        for (Entity en : w.getNearbyEntities(c, 6, 4, 6)) {
+            if (en == p || !(en instanceof LivingEntity le)) continue;
+            Vector pull = c.toVector().subtract(le.getLocation().toVector());
+            if (pull.lengthSquared() < 0.01) pull = new Vector(0.01, 0, 0.01);
+            pull.normalize().multiply(1.1).setY(0.20);
+            le.setVelocity(pull);
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 3, 1));
+        }
+        w.playSound(c, Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 0.9f, 0.75f);
+    }
+
+    private void clearPositiveEffects(LivingEntity le) {
+        PotionEffectType[] good = {
+                PotionEffectType.SPEED, PotionEffectType.HASTE, PotionEffectType.STRENGTH,
+                PotionEffectType.RESISTANCE, PotionEffectType.REGENERATION, PotionEffectType.ABSORPTION,
+                PotionEffectType.FIRE_RESISTANCE, PotionEffectType.WATER_BREATHING, PotionEffectType.NIGHT_VISION,
+                PotionEffectType.INVISIBILITY, PotionEffectType.JUMP_BOOST, PotionEffectType.DOLPHINS_GRACE
+        };
+        for (PotionEffectType type : good) le.removePotionEffect(type);
     }
 
     private void consumeOne(Player p, ItemStack it) {
@@ -806,6 +916,10 @@ public class CustomFeatureListener implements Listener {
             pearl.setMetadata("cs_healing_pearl", new FixedMetadataValue(plugin, true));
             p.setCooldown(Material.ENDER_PEARL, 20 * 10);
         }
+        int hunter = enchantLevel(main, "hunter");
+        if (hunter > 0 && (e.getEntity() instanceof AbstractArrow || e.getEntity() instanceof Trident)) {
+            e.getEntity().setMetadata("cs_proj_hunter", new FixedMetadataValue(plugin, hunter));
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -819,6 +933,13 @@ public class CustomFeatureListener implements Listener {
         }
         if (e.getEntity() instanceof EnderPearl pearl && pearl.hasMetadata("cs_healing_pearl") && pearl.getShooter() instanceof Player p) {
             Bukkit.getScheduler().runTask(plugin, () -> p.setHealth(p.getMaxHealth()));
+        }
+        if (e.getHitEntity() instanceof LivingEntity le && e.getEntity().hasMetadata("cs_proj_hunter")) {
+            int hunter = e.getEntity().getMetadata("cs_proj_hunter").get(0).asInt();
+            le.setGlowing(true);
+            le.setMetadata("cs_temp_glow", new FixedMetadataValue(plugin, System.currentTimeMillis() + 4000L));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * (2 + hunter), Math.max(0, hunter - 1)));
+            le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * (2 + hunter), 0));
         }
     }
 
@@ -941,6 +1062,18 @@ public class CustomFeatureListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDamage(EntityDamageByEntityEvent e) {
+        if (e.getEntity() instanceof Player victim && e.getDamager() instanceof LivingEntity attacker) {
+            ItemStack chest = victim.getInventory().getChestplate();
+            int reflection = enchantLevel(chest, "reflection");
+            if (reflection > 0 && !isOnCustomCooldown(victim, "reflection_proc")) {
+                customCooldowns.computeIfAbsent(victim.getUniqueId(), k -> new HashMap<>())
+                        .put("reflection_proc", System.currentTimeMillis() + 5000L);
+                double reflect = Math.max(1.5, e.getFinalDamage() * (0.18 + (0.06 * reflection)));
+                attacker.damage(reflect);
+                victim.getWorld().spawnParticle(Particle.CRIT, victim.getLocation().add(0, 1, 0), 20, 0.4, 0.6, 0.4, 0.02);
+            }
+        }
+
         if (!(e.getDamager() instanceof Player p)) return;
         ItemStack weapon = p.getInventory().getItemInMainHand();
         if (!(isSword(weapon.getType()) || isAxe(weapon.getType())) || !(e.getEntity() instanceof LivingEntity le)) return;
@@ -949,16 +1082,49 @@ public class CustomFeatureListener implements Listener {
         int lifesteal = enchantLevel(weapon, "lifesteal");
         int frost = enchantLevel(weapon, "frost");
         int berserk = enchantLevel(weapon, "berserk");
+        int executioner = enchantLevel(weapon, "executioner");
+        int armorbreak = enchantLevel(weapon, "armorbreak");
         if (poison > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 4, poison - 1));
         if (wither > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 4, wither - 1));
         if (frost > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 3, Math.max(0, frost - 1)));
         if (berserk > 0 && p.getHealth() <= (p.getMaxHealth() / 2.0)) {
             e.setDamage(e.getDamage() + (1.5 * berserk));
         }
+        if (executioner > 0 && (le.getHealth() - e.getFinalDamage()) <= (le.getMaxHealth() * 0.40)) {
+            e.setDamage(e.getDamage() + (1.75 * executioner));
+        }
+        if (armorbreak > 0 && e.getEntity() instanceof Player target) {
+            damageArmor(target, armorbreak);
+        }
         if (lifesteal > 0) {
             double heal = Math.min(p.getMaxHealth(), p.getHealth() + lifesteal);
             p.setHealth(heal);
         }
+    }
+
+    private void damageArmor(Player target, int amount) {
+        ItemStack[] armor = target.getInventory().getArmorContents();
+        boolean changed = false;
+        for (ItemStack piece : armor) {
+            if (piece == null || piece.getType().isAir() || !(piece.getItemMeta() instanceof Damageable dmg)) continue;
+            dmg.setDamage(dmg.getDamage() + amount);
+            piece.setItemMeta((ItemMeta) dmg);
+            changed = true;
+        }
+        if (changed) {
+            target.getWorld().spawnParticle(Particle.CRIT, target.getLocation().add(0, 1, 0), 8, 0.35, 0.45, 0.35, 0.01);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDeath(EntityDeathEvent e) {
+        Player killer = e.getEntity().getKiller();
+        if (killer == null) return;
+        ItemStack weapon = killer.getInventory().getItemInMainHand();
+        int bloodrage = enchantLevel(weapon, "bloodrage");
+        if (bloodrage <= 0) return;
+        killer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * (4 + bloodrage), Math.max(0, bloodrage - 1), true, false, true));
+        killer.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 4, 0, true, false, true));
     }
 
     private void startAntiGlowTicker() {

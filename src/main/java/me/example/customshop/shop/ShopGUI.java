@@ -119,6 +119,10 @@ public class ShopGUI implements Listener {
                     new ShopItem("crossbow_multishot", price("crossbow_multishot", 320), ItemFactory.crossbowMultishot(plugin)),
                     new ShopItem("crossbow_phantom", price("crossbow_phantom", 480), ItemFactory.crossbowPhantom(plugin)),
                     new ShopItem("trident_poseidon", price("trident_poseidon", 720), ItemFactory.tridentPoseidon(plugin)),
+                    new ShopItem("sword_executioner", price("sword_executioner", 980), ItemFactory.swordExecutioner(plugin)),
+                    new ShopItem("axe_crusher", price("axe_crusher", 910), ItemFactory.axeCrusher(plugin)),
+                    new ShopItem("bow_hunter", price("bow_hunter", 830), ItemFactory.bowHunter(plugin)),
+                    new ShopItem("trident_hunter", price("trident_hunter", 900), ItemFactory.tridentHunter(plugin)),
                     new ShopItem("stick_kb", price("stick_kb", 150), ItemFactory.stickKb(plugin))
             );
             case TOOLS -> List.of(
@@ -145,6 +149,7 @@ public class ShopGUI implements Listener {
                     new ShopItem("chestplate_gladiator", price("chestplate_gladiator", 620), ItemFactory.chestplateGladiator(plugin)),
                     new ShopItem("leggings_gladiator", price("leggings_gladiator", 560), ItemFactory.leggingsGladiator(plugin)),
                     new ShopItem("boots_gladiator", price("boots_gladiator", 500), ItemFactory.bootsGladiator(plugin)),
+                    new ShopItem("chestplate_mirror", price("chestplate_mirror", 860), ItemFactory.chestplateMirror(plugin)),
                     new ShopItem("elytra_immortal", price("elytra_immortal", 850), ItemFactory.elytraImmortal(plugin))
             );
             case PRIVATE_ORES -> List.of(
@@ -187,6 +192,15 @@ public class ShopGUI implements Listener {
                     new ShopItem("book_berserk_1", price("book_berserk_1", 360), ItemFactory.customBook(plugin, "berserk", 1)),
                     new ShopItem("book_berserk_2", price("book_berserk_2", 450), ItemFactory.customBook(plugin, "berserk", 2)),
                     new ShopItem("book_guardian_1", price("book_guardian_1", 420), ItemFactory.customBook(plugin, "guardian", 1)),
+                    new ShopItem("book_executioner_1", price("book_executioner_1", 470), ItemFactory.customBook(plugin, "executioner", 1)),
+                    new ShopItem("book_executioner_2", price("book_executioner_2", 580), ItemFactory.customBook(plugin, "executioner", 2)),
+                    new ShopItem("book_armorbreak_1", price("book_armorbreak_1", 450), ItemFactory.customBook(plugin, "armorbreak", 1)),
+                    new ShopItem("book_armorbreak_2", price("book_armorbreak_2", 560), ItemFactory.customBook(plugin, "armorbreak", 2)),
+                    new ShopItem("book_bloodrage_1", price("book_bloodrage_1", 420), ItemFactory.customBook(plugin, "bloodrage", 1)),
+                    new ShopItem("book_bloodrage_2", price("book_bloodrage_2", 520), ItemFactory.customBook(plugin, "bloodrage", 2)),
+                    new ShopItem("book_hunter_1", price("book_hunter_1", 430), ItemFactory.customBook(plugin, "hunter", 1)),
+                    new ShopItem("book_hunter_2", price("book_hunter_2", 530), ItemFactory.customBook(plugin, "hunter", 2)),
+                    new ShopItem("book_reflection_1", price("book_reflection_1", 480), ItemFactory.customBook(plugin, "reflection", 1)),
                     new ShopItem("book_eff_6", price("book_eff_6", 330), ItemFactory.customBook(plugin, "efficiency", 6)),
                     new ShopItem("book_eff_7", price("book_eff_7", 380), ItemFactory.customBook(plugin, "efficiency", 7)),
                     new ShopItem("book_eff_8", price("book_eff_8", 430), ItemFactory.customBook(plugin, "efficiency", 8)),
@@ -219,6 +233,10 @@ public class ShopGUI implements Listener {
                     new ShopItem("fire_tornado", price("fire_tornado", 430), ItemFactory.fireTornado(plugin)),
                     new ShopItem("water_cube", price("water_cube", 380), ItemFactory.waterCube(plugin)),
                     new ShopItem("unreal_aura", price("unreal_aura", 480), ItemFactory.unrealAura(plugin)),
+                    new ShopItem("blood_totem", price("blood_totem", 560), ItemFactory.bloodTotem(plugin)),
+                    new ShopItem("smoke_bomb", price("smoke_bomb", 390), ItemFactory.smokeBomb(plugin)),
+                    new ShopItem("purge_stone", price("purge_stone", 520), ItemFactory.purgeStone(plugin)),
+                    new ShopItem("gravity_orb", price("gravity_orb", 470), ItemFactory.gravityOrb(plugin)),
                     new ShopItem("god_touch", price("god_touch", 240), ItemFactory.godTouch(plugin))
             );
             case CUSTOM_POTIONS -> List.of(
