@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -77,6 +78,24 @@ public class CustomFeatureListener implements Listener {
     private Integer dataInt(ItemStack it, String key) {
         if (it == null || !it.hasItemMeta()) return null;
         return it.getItemMeta().getPersistentDataContainer().get(this.key(key), PersistentDataType.INTEGER);
+    }
+
+    private boolean isCharm(ItemStack it) {
+        return data(it, "charm_type") != null;
+    }
+
+    private boolean isCharmOnCooldown(ItemStack it) {
+        if (it == null || !it.hasItemMeta()) return false;
+        Long until = it.getItemMeta().getPersistentDataContainer().get(key("charm_cooldown_until"), PersistentDataType.LONG);
+        return until != null && until > System.currentTimeMillis();
+    }
+
+    private ItemStack withCharmCooldown(ItemStack original, long millis) {
+        ItemStack copy = original.clone();
+        ItemMeta meta = copy.getItemMeta();
+        meta.getPersistentDataContainer().set(key("charm_cooldown_until"), PersistentDataType.LONG, System.currentTimeMillis() + millis);
+        copy.setItemMeta(meta);
+        return copy;
     }
 
     private boolean hasEnchant(ItemStack it, String type) {
@@ -1061,6 +1080,23 @@ public class CustomFeatureListener implements Listener {
             item.setAmount(0);
             e.getPlayer().sendMessage(ChatColor.DARK_GRAY + "Нестабильный предмет не выдержал нагрузки.");
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+    public void onCharmResurrect(EntityResurrectEvent e) {
+        if (!(e.getEntity() instanceof Player p)) return;
+
+        ItemStack off = p.getInventory().getItemInOffHand();
+        if (!isCharm(off)) return;
+
+        if (isCharmOnCooldown(off)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        ItemStack restored = withCharmCooldown(off, 45_000L);
+        Bukkit.getScheduler().runTask(plugin, () -> p.getInventory().setItemInOffHand(restored));
+        p.setCooldown(Material.TOTEM_OF_UNDYING, 20 * 45);
     }
 
     @EventHandler(ignoreCancelled = true)

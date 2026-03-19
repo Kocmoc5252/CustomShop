@@ -7,6 +7,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -15,10 +16,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class CharmTicker {
     private final Plugin plugin;
     private final NamespacedKey charmKey;
+    private final NamespacedKey cooldownUntilKey;
 
     public CharmTicker(Plugin plugin) {
         this.plugin = plugin;
         this.charmKey = new NamespacedKey(plugin, "charm_type");
+        this.cooldownUntilKey = new NamespacedKey(plugin, "charm_cooldown_until");
     }
 
     public void start() {
@@ -56,6 +59,13 @@ public class CharmTicker {
         }
     }
 
+    private boolean isCharmOnCooldown(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return false;
+        ItemMeta meta = item.getItemMeta();
+        Long until = meta.getPersistentDataContainer().get(cooldownUntilKey, PersistentDataType.LONG);
+        return until != null && until > System.currentTimeMillis();
+    }
+
     private void applyCharm(Player p) {
         ItemStack off = p.getInventory().getItemInOffHand();
 
@@ -69,6 +79,11 @@ public class CharmTicker {
 
         // ✅ Если нет charm_type — сбросить сердца и выйти
         if (type == null) {
+            resetHearts(p);
+            return;
+        }
+
+        if (isCharmOnCooldown(off)) {
             resetHearts(p);
             return;
         }
