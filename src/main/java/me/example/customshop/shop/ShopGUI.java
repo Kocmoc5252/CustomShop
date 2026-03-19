@@ -246,7 +246,12 @@ public class ShopGUI implements Listener {
                     new ShopItem("flash_potion", price("flash_potion", 290), ItemFactory.customPotion(plugin, "flash", Material.SPLASH_POTION)),
                     new ShopItem("titan_potion", price("titan_potion", 360), ItemFactory.customPotion(plugin, "titan", Material.SPLASH_POTION)),
                     new ShopItem("venom_potion", price("venom_potion", 310), ItemFactory.customPotion(plugin, "venom", Material.SPLASH_POTION)),
-                    new ShopItem("shadow_potion", price("shadow_potion", 320), ItemFactory.customPotion(plugin, "shadow", Material.SPLASH_POTION))
+                    new ShopItem("shadow_potion", price("shadow_potion", 320), ItemFactory.customPotion(plugin, "shadow", Material.SPLASH_POTION)),
+                    new ShopItem("rage_potion", price("rage_potion", 420), ItemFactory.customPotion(plugin, "rage", Material.SPLASH_POTION)),
+                    new ShopItem("aegis_potion", price("aegis_potion", 430), ItemFactory.customPotion(plugin, "aegis", Material.SPLASH_POTION)),
+                    new ShopItem("plague_potion", price("plague_potion", 410), ItemFactory.customPotion(plugin, "plague", Material.SPLASH_POTION)),
+                    new ShopItem("frostbite_potion", price("frostbite_potion", 390), ItemFactory.customPotion(plugin, "frostbite", Material.SPLASH_POTION)),
+                    new ShopItem("warp_potion", price("warp_potion", 440), ItemFactory.customPotion(plugin, "warp", Material.SPLASH_POTION))
             );
             case RARE_ITEMS -> List.of(
                     new ShopItem("elytra", price("elytra", 900), ItemFactory.rareSingle(plugin, Material.ELYTRA, "&6Элитры", 1)),

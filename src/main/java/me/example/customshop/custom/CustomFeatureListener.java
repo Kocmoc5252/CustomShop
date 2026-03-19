@@ -134,6 +134,9 @@ public class CustomFeatureListener implements Listener {
             case "hunter" -> "&aОхотник " + roman(level);
             case "reflection" -> "&bОтражение " + roman(level);
             case "bloodrage" -> "&cЯрость " + roman(level);
+            case "brittle" -> "&7Хрупкость " + roman(level);
+            case "drained" -> "&8Истощение " + roman(level);
+            case "jinxed" -> "&5Сглаз " + roman(level);
             default -> "&fКастом";
         };
     }
@@ -175,30 +178,84 @@ public class CustomFeatureListener implements Listener {
 
     private ItemStack randomTableBook(int cost) {
         List<ItemStack> pool = new ArrayList<>();
-        pool.add(ItemFactory.customBook(plugin, "bulldozer", 1));
-        pool.add(ItemFactory.customBook(plugin, "treecapitator", 1));
-        pool.add(ItemFactory.customBook(plugin, "magnet", 1));
-        pool.add(ItemFactory.customBook(plugin, "greenifier", 1));
-        pool.add(ItemFactory.customBook(plugin, "autosmelt", 1));
-        pool.add(ItemFactory.customBook(plugin, "lavawalker", 1));
-        pool.add(ItemFactory.customBook(plugin, "antichams", 1));
-        pool.add(ItemFactory.customBook(plugin, "guardian", 1));
-        pool.add(ItemFactory.customBook(plugin, "light_handle", 1));
-        pool.add(ItemFactory.customBook(plugin, "immortality", 1));
-        pool.add(ItemFactory.customBook(plugin, "poison", cost >= 24 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "wither", cost >= 24 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "lifesteal", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "frost", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "berserk", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "executioner", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "armorbreak", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "bloodrage", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "hunter", cost >= 26 ? 2 : 1));
-        pool.add(ItemFactory.customBook(plugin, "reflection", 1));
-        if (cost >= 18) pool.add(ItemFactory.customBook(plugin, "efficiency", Math.min(10, 6 + random.nextInt(cost >= 30 ? 3 : 2))));
-        if (cost >= 18) pool.add(ItemFactory.customBook(plugin, "sharpness", Math.min(10, 6 + random.nextInt(cost >= 30 ? 3 : 2))));
-        if (cost >= 24) pool.add(ItemFactory.customBook(plugin, "fortune", 5));
+        addBook(pool, "bulldozer", 1);
+        addBook(pool, "treecapitator", 1);
+        addBook(pool, "magnet", 1);
+        addBook(pool, "greenifier", 1);
+        addBook(pool, "autosmelt", 1);
+        addBook(pool, "lavawalker", 1);
+        addBook(pool, "antichams", 1);
+        addBook(pool, "guardian", 1);
+        addBook(pool, "reflection", 1);
+        addBook(pool, "light_handle", 1);
+        addBook(pool, "immortality", 1);
+        addBook(pool, "supermending", 1);
+        addScaledCombatBooks(pool, cost, "poison");
+        addScaledCombatBooks(pool, cost, "wither");
+        addScaledCombatBooks(pool, cost, "lifesteal");
+        addScaledCombatBooks(pool, cost, "frost");
+        addScaledCombatBooks(pool, cost, "berserk");
+        addScaledCombatBooks(pool, cost, "executioner");
+        addScaledCombatBooks(pool, cost, "armorbreak");
+        addScaledCombatBooks(pool, cost, "bloodrage");
+        addScaledCombatBooks(pool, cost, "hunter");
+        if (cost >= 16) {
+            for (int level = 6; level <= maxTableVanillaLevel(cost); level++) {
+                addBook(pool, "efficiency", level);
+                addBook(pool, "sharpness", level);
+            }
+        }
+        if (cost >= 24) addBook(pool, "fortune", 5);
         return pool.get(random.nextInt(pool.size()));
+    }
+
+    private void addBook(List<ItemStack> pool, String type, int level) {
+        pool.add(ItemFactory.customBook(plugin, type, level));
+    }
+
+    private void addScaledCombatBooks(List<ItemStack> pool, int cost, String type) {
+        addBook(pool, type, 1);
+        if (cost >= 24) addBook(pool, type, 2);
+    }
+
+    private int maxTableVanillaLevel(int cost) {
+        if (cost >= 30) return 10;
+        if (cost >= 27) return 9;
+        if (cost >= 24) return 8;
+        if (cost >= 20) return 7;
+        return 6;
+    }
+
+    private int rollTableLevel(String type, int cost) {
+        return switch (type) {
+            case "poison", "wither", "lifesteal", "frost", "berserk", "executioner", "armorbreak", "bloodrage", "hunter" -> cost >= 24 && random.nextDouble() < (cost >= 30 ? 0.70 : 0.45) ? 2 : 1;
+            case "efficiency", "sharpness" -> 6 + random.nextInt(Math.max(1, maxTableVanillaLevel(cost) - 5));
+            case "fortune" -> 5;
+            default -> 1;
+        };
+    }
+
+    private boolean rollTableEnchant(ItemStack item, int cost) {
+        List<String> candidates = new ArrayList<>();
+        List<String> all = List.of(
+                "bulldozer", "treecapitator", "poison", "wither", "efficiency", "sharpness", "lavawalker",
+                "antichams", "magnet", "supermending", "greenifier", "immortality", "light_handle", "fortune",
+                "lifesteal", "frost", "guardian", "berserk", "autosmelt", "executioner", "armorbreak",
+                "hunter", "reflection", "bloodrage"
+        );
+        for (String type : all) {
+            if (canApply(item.getType(), type)) candidates.add(type);
+        }
+        if (candidates.isEmpty()) return false;
+
+        Collections.shuffle(candidates, random);
+        String type = candidates.get(0);
+        int level = rollTableLevel(type, cost);
+        if (type.equals("efficiency")) item.addUnsafeEnchantment(Enchantment.EFFICIENCY, level);
+        else if (type.equals("sharpness")) item.addUnsafeEnchantment(Enchantment.SHARPNESS, level);
+        else if (type.equals("fortune")) item.addUnsafeEnchantment(Enchantment.FORTUNE, level);
+        else setEnchant(item, type, level);
+        return true;
     }
 
     @EventHandler
@@ -215,47 +272,21 @@ public class CustomFeatureListener implements Listener {
     public void onEnchant(EnchantItemEvent e) {
         ItemStack item = e.getItem();
         if (item == null) return;
-        if (isEnchantBook(item.getType()) && random.nextDouble() < customBookChance(e.getExpLevelCost())) {
-            ItemStack rolled = randomTableBook(e.getExpLevelCost());
+        int cost = e.getExpLevelCost();
+        if (isEnchantBook(item.getType()) && random.nextDouble() < customBookChance(cost)) {
+            ItemStack rolled = randomTableBook(cost);
             e.getEnchantsToAdd().clear();
             item.setType(rolled.getType());
             item.setItemMeta(rolled.getItemMeta());
             return;
         }
-        double r = random.nextDouble();
-        if (isPickOrShovel(item.getType())) {
-            if (r < 0.15) setEnchant(item, "bulldozer", 1);
-            else if (r < 0.26) setEnchant(item, "magnet", 1);
-            else if (r < 0.34) setEnchant(item, "autosmelt", 1);
-            else if (r < 0.42) setEnchant(item, "unstable", 1 + random.nextInt(2));
-        } else if (isAxe(item.getType())) {
-            if (r < 0.15) setEnchant(item, "treecapitator", 1);
-            else if (r < 0.26) setEnchant(item, "magnet", 1);
-            else if (r < 0.34) setEnchant(item, "berserk", 1);
-            else if (r < 0.42) setEnchant(item, "unstable", 1 + random.nextInt(2));
-        } else if (isHoe(item.getType())) {
-            if (r < 0.22) setEnchant(item, "greenifier", 1);
-            else if (r < 0.32) setEnchant(item, "unstable", 1 + random.nextInt(2));
-        } else if (isSword(item.getType()) || isAxe(item.getType())) {
-            if (r < 0.10) setEnchant(item, "poison", 1 + random.nextInt(2));
-            else if (r < 0.20) setEnchant(item, "wither", 1 + random.nextInt(2));
-            else if (r < 0.29) setEnchant(item, "lifesteal", 1 + random.nextInt(2));
-            else if (r < 0.38) setEnchant(item, "frost", 1 + random.nextInt(2));
-            else if (r < 0.47) setEnchant(item, "executioner", 1 + random.nextInt(2));
-            else if (r < 0.56) setEnchant(item, "armorbreak", 1 + random.nextInt(2));
-            else if (r < 0.64) setEnchant(item, "bloodrage", 1 + random.nextInt(2));
-        } else if (isBoots(item.getType()) && r < 0.2) {
-            setEnchant(item, "lavawalker", 1);
-        } else if (isChest(item.getType())) {
-            if (r < 0.14) setEnchant(item, "antichams", 1);
-            else if (r < 0.24) setEnchant(item, "guardian", 1);
-            else if (r < 0.33) setEnchant(item, "reflection", 1);
-        } else if (item.getType() == Material.ELYTRA && r < 0.18) {
-            setEnchant(item, "immortality", 1);
-        } else if (isTrident(item.getType()) && r < 0.18) {
-            setEnchant(item, "light_handle", 1);
-        } else if (isBowLike(item.getType()) && r < 0.24) {
-            setEnchant(item, "hunter", 1 + random.nextInt(2));
+
+        double chance = cost >= 30 ? 0.36 : cost >= 24 ? 0.27 : cost >= 18 ? 0.18 : 0.10;
+        if (random.nextDouble() < chance) {
+            rollTableEnchant(item, cost);
+            if (cost >= 30 && random.nextDouble() < 0.12) {
+                rollTableEnchant(item, cost);
+            }
         }
     }
     @EventHandler(ignoreCancelled = true)
@@ -314,7 +345,7 @@ public class CustomFeatureListener implements Listener {
             case "immortality" -> material == Material.ELYTRA;
             case "light_handle" -> isTrident(material);
             case "hunter" -> isBowLike(material);
-            case "unstable", "supermending" -> material.getMaxDurability() > 0;
+            case "unstable", "brittle", "drained", "jinxed", "supermending" -> material.getMaxDurability() > 0;
             default -> false;
         };
     }
@@ -324,10 +355,32 @@ public class CustomFeatureListener implements Listener {
         List<ItemStack> loot = e.getLoot();
         for (ItemStack stack : loot) {
             if (stack == null || stack.getType().isAir()) continue;
-            if (isToolish(stack.getType()) && random.nextDouble() < 0.12) {
-                setEnchant(stack, "unstable", random.nextDouble() < 0.35 ? 2 : 1);
+            if (stack.getType().getMaxDurability() <= 0) continue;
+            if (!isLootCurseCandidate(stack.getType())) continue;
+            if (random.nextDouble() < 0.17) {
+                applyRandomLootCurse(stack);
             }
         }
+    }
+
+    private boolean isLootCurseCandidate(Material material) {
+        return isToolish(material)
+                || isSword(material)
+                || isAxe(material)
+                || isBowLike(material)
+                || material == Material.ELYTRA
+                || material.name().endsWith("HELMET")
+                || material.name().endsWith("CHESTPLATE")
+                || material.name().endsWith("LEGGINGS")
+                || material.name().endsWith("BOOTS");
+    }
+
+    private void applyRandomLootCurse(ItemStack stack) {
+        double r = random.nextDouble();
+        if (r < 0.34) setEnchant(stack, "unstable", random.nextDouble() < 0.35 ? 2 : 1);
+        else if (r < 0.62) setEnchant(stack, "brittle", random.nextDouble() < 0.30 ? 2 : 1);
+        else if (r < 0.86) setEnchant(stack, "drained", random.nextDouble() < 0.28 ? 2 : 1);
+        else setEnchant(stack, "jinxed", 1);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -367,6 +420,11 @@ public class CustomFeatureListener implements Listener {
                     else drops.forEach(drop -> b.getWorld().dropItemNaturally(b.getLocation(), drop));
                 }
             }.runTask(plugin);
+        }
+        int drained = enchantLevel(tool, "drained");
+        if (drained > 0 && random.nextDouble() < (0.10 * drained)) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * (2 + drained), Math.max(0, drained - 1), true, false, true));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 2, 0, true, false, true));
         }
     }
 
@@ -1001,6 +1059,32 @@ public class CustomFeatureListener implements Listener {
                 le.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 25, 0));
                 le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0));
             }
+            case "rage" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 60, 2));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 45, 0));
+            }
+            case "aegis" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 55, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 70, 2));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 90, 0));
+            }
+            case "plague" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 16, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 7, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20 * 20, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 12, 0));
+            }
+            case "frostbite" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 12, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * 10, 0));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 8, 0));
+            }
+            case "warp" -> {
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 16, 2));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 16, 1));
+                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20 * 20, 0));
+            }
         }
     }
 
@@ -1014,6 +1098,15 @@ public class CustomFeatureListener implements Listener {
         }
         if (item.getType() == Material.TRIDENT && hasEnchant(item, "light_handle") && random.nextDouble() < 0.5) {
             e.setCancelled(true);
+        }
+        int brittle = enchantLevel(item, "brittle");
+        if (brittle > 0) {
+            e.setDamage(e.getDamage() + brittle);
+        }
+        int drained = enchantLevel(item, "drained");
+        if (drained > 0 && random.nextDouble() < (0.08 * drained)) {
+            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * (2 + drained), Math.max(0, drained - 1), true, false, true));
+            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20 * 5, 0, true, false, true));
         }
         int unstable = enchantLevel(item, "unstable");
         if (unstable <= 0) return;
@@ -1033,6 +1126,11 @@ public class CustomFeatureListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onArmorDamage(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player p)) return;
+        int jinxed = totalEquippedEnchant(p, "jinxed");
+        if (jinxed > 0 && random.nextDouble() < (0.10 * jinxed)) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * (2 + jinxed), 0, true, false, true));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 20 * (2 + jinxed), 0, true, false, true));
+        }
         ItemStack chest = p.getInventory().getChestplate();
         int guardian = enchantLevel(chest, "guardian");
         if (guardian <= 0) return;
@@ -1043,6 +1141,14 @@ public class CustomFeatureListener implements Listener {
                 .put("guardian_proc", System.currentTimeMillis() + 8_000L);
         p.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 4, Math.max(0, guardian - 1), true, false, true));
         p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 3, 0, true, false, true));
+    }
+
+    private int totalEquippedEnchant(Player player, String type) {
+        int level = 0;
+        for (ItemStack piece : player.getInventory().getArmorContents()) {
+            level += enchantLevel(piece, type);
+        }
+        return level;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -1084,6 +1190,16 @@ public class CustomFeatureListener implements Listener {
         int berserk = enchantLevel(weapon, "berserk");
         int executioner = enchantLevel(weapon, "executioner");
         int armorbreak = enchantLevel(weapon, "armorbreak");
+        int drained = enchantLevel(weapon, "drained");
+        int jinxed = enchantLevel(weapon, "jinxed");
+        if (drained > 0 && random.nextDouble() < (0.10 * drained)) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * (2 + drained), 0, true, false, true));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20 * 5, 0, true, false, true));
+        }
+        if (jinxed > 0 && random.nextDouble() < 0.14) {
+            p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 20 * 4, 0, true, false, true));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20 * 3, 0, true, false, true));
+        }
         if (poison > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 4, poison - 1));
         if (wither > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 4, wither - 1));
         if (frost > 0) le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 3, Math.max(0, frost - 1)));

@@ -107,6 +107,11 @@ prices:
   titan_potion: 360
   venom_potion: 310
   shadow_potion: 320
+  rage_potion: 420
+  aegis_potion: 430
+  plague_potion: 410
+  frostbite_potion: 390
+  warp_potion: 440
 
   elytra: 900
   ench_gapple: 880

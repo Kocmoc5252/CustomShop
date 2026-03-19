@@ -266,6 +266,9 @@ public class ItemFactory {
             case "hunter" -> "&aОхотник " + roman(level);
             case "reflection" -> "&bОтражение " + roman(level);
             case "bloodrage" -> "&cЯрость " + roman(level);
+            case "brittle" -> "&7Хрупкость " + roman(level);
+            case "drained" -> "&8Истощение " + roman(level);
+            case "jinxed" -> "&5Сглаз " + roman(level);
             default -> "&fКнига";
         };
         String apply = switch (type) {
@@ -282,7 +285,7 @@ public class ItemFactory {
             case "greenifier" -> "&7Мотыга";
             case "immortality" -> "&7Элитры";
             case "light_handle" -> "&7Трезубец";
-            case "unstable" -> "&cПроклятие";
+            case "unstable", "brittle", "drained", "jinxed" -> "&cПроклятие";
             default -> "&7Наковальня";
         };
         ItemStack it = new ItemStack(Material.ENCHANTED_BOOK);
@@ -326,6 +329,11 @@ public class ItemFactory {
             case "titan" -> "&6Титан";
             case "venom" -> "&aЯдовитый туман";
             case "shadow" -> "&8Тень";
+            case "rage" -> "&cФурия";
+            case "aegis" -> "&eЭгида";
+            case "plague" -> "&5Чума";
+            case "frostbite" -> "&bОбморожение";
+            case "warp" -> "&dРазлом";
             default -> "&fЗелье";
         };
         Component component = styledComponent(name);
@@ -333,7 +341,21 @@ public class ItemFactory {
             m.itemName(component);
         } catch (Throwable ignored) {}
         m.displayName(component);
-        m.lore(List.of(AMP.deserialize("&8Кастомное зелье")));
+        m.lore(switch (type) {
+            case "storm" -> List.of(AMP.deserialize("&8Скорость, сила, прыжок"));
+            case "medic" -> List.of(AMP.deserialize("&8Полный хил и реген"));
+            case "burp" -> List.of(AMP.deserialize("&8Яд, иссушение, слабость"));
+            case "flash" -> List.of(AMP.deserialize("&8Ослепление цели"));
+            case "titan" -> List.of(AMP.deserialize("&8Сила, резист, абсорбция"));
+            case "venom" -> List.of(AMP.deserialize("&8Токсичный дебафф"));
+            case "shadow" -> List.of(AMP.deserialize("&8Инвиз и ускорение"));
+            case "rage" -> List.of(AMP.deserialize("&8Ярость и боевой бафф"));
+            case "aegis" -> List.of(AMP.deserialize("&8Жирная защита"));
+            case "plague" -> List.of(AMP.deserialize("&8Тяжёлый дебафф по зоне"));
+            case "frostbite" -> List.of(AMP.deserialize("&8Морозит и душит"));
+            case "warp" -> List.of(AMP.deserialize("&8Рывок и мобильность"));
+            default -> List.of(AMP.deserialize("&8Кастомное зелье"));
+        });
         try {
             m.setBasePotionType(PotionType.WATER);
         } catch (Throwable ignored) {}
@@ -345,6 +367,11 @@ public class ItemFactory {
             case "titan" -> Color.ORANGE;
             case "venom" -> Color.LIME;
             case "shadow" -> Color.GRAY;
+            case "rage" -> Color.RED;
+            case "aegis" -> Color.YELLOW;
+            case "plague" -> Color.PURPLE;
+            case "frostbite" -> Color.fromRGB(110, 220, 255);
+            case "warp" -> Color.fromRGB(210, 70, 255);
             default -> Color.GRAY;
         });
         mark(plugin, m, "customshop_item", type + "_potion");
@@ -935,6 +962,9 @@ public class ItemFactory {
             case "hunter" -> "&aОхотник " + roman(level);
             case "reflection" -> "&bОтражение " + roman(level);
             case "bloodrage" -> "&cЯрость " + roman(level);
+            case "brittle" -> "&7Хрупкость " + roman(level);
+            case "drained" -> "&8Истощение " + roman(level);
+            case "jinxed" -> "&5Сглаз " + roman(level);
             default -> "&7Кастом " + roman(level);
         };
     }
