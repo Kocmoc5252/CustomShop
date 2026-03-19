@@ -1023,68 +1023,8 @@ public class CustomFeatureListener implements Listener {
     }
 
     private void applyCustomPotionEffect(String type, LivingEntity le) {
-        switch (type) {
-            case "storm" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 120, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 120, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 120, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 120, 1));
-            }
-            case "medic" -> {
-                le.setHealth(le.getMaxHealth());
-                le.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 120, 1));
-            }
-            case "burp" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 18, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 6, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 15, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 20 * 12, 0));
-            }
-            case "flash" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 20 * 5, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1));
-            }
-            case "titan" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 90, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 90, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 90, 1));
-            }
-            case "venom" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 0));
-            }
-            case "shadow" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 45, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 25, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0));
-            }
-            case "rage" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 60, 2));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 45, 0));
-            }
-            case "aegis" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 55, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 70, 2));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 90, 0));
-            }
-            case "plague" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 16, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 7, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20 * 20, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 12, 0));
-            }
-            case "frostbite" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 12, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * 10, 0));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 8, 0));
-            }
-            case "warp" -> {
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 16, 2));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 16, 1));
-                le.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20 * 20, 0));
-            }
+        if ("medic".equals(type)) {
+            le.setHealth(le.getMaxHealth());
         }
     }
 

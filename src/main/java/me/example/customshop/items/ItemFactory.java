@@ -20,6 +20,8 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import java.util.*;
@@ -358,6 +360,10 @@ public class ItemFactory {
         });
         try {
             m.setBasePotionType(PotionType.WATER);
+        } catch (Throwable ignored) {}
+        try {
+            m.clearCustomEffects();
+            addDisplayedPotionEffects(m, type);
         } catch (Throwable ignored) {}
         m.setColor(switch (type) {
             case "storm" -> Color.AQUA;
@@ -916,6 +922,72 @@ public class ItemFactory {
         meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
         return item;
+    }
+
+    private static void addDisplayedPotionEffects(PotionMeta m, String type) {
+        switch (type) {
+            case "storm" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 120, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 120, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 120, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 120, 0), true);
+            }
+            case "medic" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION, 20 * 120, 1), true);
+            }
+            case "burp" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 20 * 18, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 6, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 15, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.NAUSEA, 20 * 12, 0), true);
+            }
+            case "flash" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.DARKNESS, 20 * 5, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1), true);
+            }
+            case "titan" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 90, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 90, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 90, 1), true);
+            }
+            case "venom" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 0), true);
+            }
+            case "shadow" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 45, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 20 * 25, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 20 * 60, 0), true);
+            }
+            case "rage" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.STRENGTH, 20 * 60, 2), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 45, 0), true);
+            }
+            case "aegis" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.RESISTANCE, 20 * 55, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION, 20 * 70, 2), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 90, 0), true);
+            }
+            case "plague" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.POISON, 20 * 16, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 7, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.HUNGER, 20 * 20, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 12, 0), true);
+            }
+            case "frostbite" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SLOWNESS, 20 * 12, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.MINING_FATIGUE, 20 * 10, 0), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 8, 0), true);
+            }
+            case "warp" -> {
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 16, 2), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 16, 1), true);
+                m.addCustomEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 20 * 20, 0), true);
+            }
+        }
     }
 
     private static ItemStack privateClaimCore(Plugin plugin, Material mat, String id, String name, int radius) {
